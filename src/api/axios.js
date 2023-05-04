@@ -7,3 +7,4 @@ const instatce = axios.create({
         language : "ko-KR",
     }
 })
+export default instatce;
