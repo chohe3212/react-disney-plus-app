@@ -6,7 +6,7 @@ const Nav = () => {
   const [show, setShow] = useState(false);
 
   // ** 맨 위에 네비게이션 바 투명도 조절하기
-  useEffect(() => {  // useEffect : 랜더링을 하면, 이 함수가 call 된다.
+  useEffect(() => {  // useEffects : 랜더링을 하면, 이 함수가 call 된다.
     window.addEventListener('scroll', () => {  // 만약, scroll 이벤트가 실행되면,
       if(window.scrollY > 50) {
         setShow(true);
