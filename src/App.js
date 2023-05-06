@@ -1,43 +1,36 @@
+import { Outlet, Route, Routes } from 'react-router-dom';
 import './App.css';
+import MainPage from './pages/MainPage';
+import LoginPage from './pages/LoginPage';
+import DetailPage from './pages/DetailPage';
+import SearchPage from './pages/SearchPage';
 import Nav from './components/Nav';
-import Banner from './components/Banner';
-import styled from 'styled-components'
-import Category from './components/Category';
-import Row from './components/Row';
-import requests from './api/request';
+
+const Layout = () => {
+  return (
+    <div>
+      <Nav />
+
+      <Outlet />
+    </div>
+  )
+}
+
 
 function App() {
   return (
-    <Container>
-      <Nav/>
-      <Banner/>
-      <Category/>
-      <Row title = "Trending Now" id = "TN" fetchUrl = {requests.fetchTrending}/>
-      <Row title = "Top Rated" id = "TR" fetchUrl = {requests.fetchTopRated}/>
-      <Row title = "Action Mobies" id = "AM" fetchUrl = {requests.fetchActionMovies}/>
-      <Row title = "ComedyMovies" id = "CM" fetchUrl = {requests.fetchComedyMovies}/>
+    <div className='app'>
+      <Routes>
+        <Route path = "/" element={<Layout />}> 
+          <Route index element = {<LoginPage />} /> {/* 기본설정 페이지 */}
+          <Route path = "main" element={<MainPage />} /> {/* path가 main이라면 main page로 이동 */}
+          <Route path = ":movieId" element={<DetailPage/>} /> {/* path가 main이라면 main page로 이동 */}
+          <Route path = "search" element={<SearchPage/>} /> {/* path가 main이라면 main page로 이동 */}
+        </Route>
 
-    </Container>
+      </Routes>
+    </div>
   );
 }
 
 export default App;
-
-
-const Container = styled.main `
-  position: relative;
-  min-height:calc(100vh - 250px);
-  overflow-x: hidden;
-  display: block;
-  top :72px;
-  padding : 0 calc(3.5vw + 5px);
-
-  &:after{
-    background: url("/images/home-background.png") center center / cover no-repeat fixed;
-    content: "";
-    position: absolute;
-    inset: 0px;
-    opacity: 1;
-    z-index:-1;
-  }
-`;
