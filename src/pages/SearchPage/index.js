@@ -2,6 +2,7 @@ import axios from '../../api/axios';
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import './SearchPage.css';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const SearchPage = () => {
   const[searchResults, setSearchResults] = useState([]) // 검색으로 찾은 정보들이 들어감.
@@ -11,15 +12,16 @@ const SearchPage = () => {
   }
   let query = useQuery();
   const searchTerm = query.get("q"); // q = 안에 있는 값을 넣어줌.
+  const debouncedTerm = useDebounce(query.get("q"),500)
 
 
   // searchTerm이 바뀔때마다 찾은 정보 업데이트 해주기.
   useEffect(() => {
-    if(searchTerm) { // 입력한 값이 있다면
-      fetchSearchMovie();
+    if(debouncedTerm) { // 입력한 값이 있다면
+      fetchSearchMovie(debouncedTerm);
     }
 
-  }, [searchTerm]); // searchTerm이 변경되면 다시 호출
+  }, [debouncedTerm]); // searchTerm이 변경되면 다시 호출
 
   // 비동기 요청으로 api 서버에게 요청한다. (async, await)
   const fetchSearchMovie = async () => {
@@ -55,7 +57,7 @@ const SearchPage = () => {
   }
   else { // 검색창에 값이 없을때
     return (
-      <section className = 'no-result'>
+      <section className = 'no-results'>
         <div className='no-results__text'>
           <p>
             찾고자 하는 검색어 "{searchTerm}"에 맞는 영화가 없습니다.
