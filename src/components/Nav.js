@@ -1,13 +1,30 @@
 import React, {useEffect, useState} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
 const Nav = () => {
   const [show, setShow] = useState(false);
-  const {pathname} = useLocation; // 검색하기 위한 input 생성
+  const {pathname} = useLocation(); // 검색하기 위한 input 생성
   const [searchValue, setSearchValue] = useState("");
   const navigate  = useNavigate();
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+  
+  // nav 컴포넌트는 모든 페이지에 있기에 인증된 유저인지 체크
+  useEffect(() =>{
+    onAuthStateChanged(auth,(user)=> {
+      if(user) {
+       if(pathname === "/")
+         {
+          navigate("/main")
+         }
+      }else{
+        navigate("/")
+      }
+    });
+  },[]);
+
 
   // ** 맨 위에 네비게이션 바 투명도 조절하기
   useEffect(() => {  // useEffects : 랜더링을 하면, 이 함수가 call 된다.
@@ -35,6 +52,16 @@ const Nav = () => {
     navigate(`/search?q=${e.target.value}`);
   }
 
+  const handleAuth = () => {
+  
+  signInWithPopup(auth,provider)
+  .then(result =>{})
+  .catch(error => {
+    console.error(error);
+  });
+  
+  }
+  console.log(pathname)
   return (
     <NavWrapper show = {show}>
       <Logo>
@@ -44,14 +71,22 @@ const Nav = () => {
         onClick = {() => (window.location.href = "/")}
         />
       </Logo>
+
       {pathname === "/" ? 
-      (<Login>Login</Login>) : 
-      <Input 
-        value = {searchValue}
-        onChange={handleChange}
-        className = 'nav__input' 
-        type="text" 
-        placeholder='영화를 검색해보세요'/>}
+      (<Login onClick = { handleAuth }>Login</Login>) : 
+      <><Input
+          value={searchValue}
+          onChange={handleChange}
+          className='nav__input'
+          type="text"
+          placeholder='영화를 검색해보세요' /><Signout>
+            <UserImg />
+            <DropDown>
+              <span>Sign out</span>
+            </DropDown>
+          </Signout>
+        </>
+      }
     </NavWrapper>
       
     
@@ -60,9 +95,21 @@ const Nav = () => {
 
 export default Nav
 
+const Signout= styled.div`
+
+`;
+
+const UserImg = styled.div`
+
+`;
+const DropDown = styled.div`
+
+`;
+
+
 const Login = styled.a`
-  background-color : rgbs (0,0,0,0.6);
-  padding: 8px, 16px;
+  background-color : rgba(0,0,0,0.6);
+  padding: 8px 16px;
   text-transform: uppercase;
   letter-spacing:1.5px;
   border: 1px solid #f9f9f9;
