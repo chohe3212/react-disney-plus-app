@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { signOut, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
 const Nav = () => {
   const [show, setShow] = useState(false);
@@ -10,6 +10,11 @@ const Nav = () => {
   const navigate  = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
+  // 유저에 대한 정보를 localStorage에서 가져와서 보여줌.
+  const initialUserData = localStorage.getItem("userData") ?
+  JSON.parse(localStorage.getItem("userData")) : {};
+
+  const [userData, setUserData] = useState(initialUserData);
   
   // nav 컴포넌트는 모든 페이지에 있기에 인증된 유저인지 체크
   useEffect(() =>{
@@ -17,13 +22,13 @@ const Nav = () => {
       if(user) {
        if(pathname === "/")
          {
-          navigate("/main")
+          navigate("/main");
          }
       }else{
-        navigate("/")
+        navigate("/");
       }
-    });
-  },[]);
+    })
+  },[auth, navigate, pathname]);
 
 
   // ** 맨 위에 네비게이션 바 투명도 조절하기
@@ -52,16 +57,31 @@ const Nav = () => {
     navigate(`/search?q=${e.target.value}`);
   }
 
+  const handleSignout = () => {
+    signOut(auth).then(()=> {
+      setUserData({});
+      navigate(`/`);
+    }).catch((error)=> {
+      console.log(error)
+    })
+  }
+
   const handleAuth = () => {
   
   signInWithPopup(auth,provider)
-  .then(result =>{})
+  .then(result =>{
+    setUserData(result.user);
+    localStorage.setItem('userData',JSON.stringify(result.user));
+    // localStorage에 result.user를 문자열화 해서 넣어줌.
+    // 이를 통해 새로고침이나 창을 닫아도 유저에 대한 정보가 남아있도록 함.
+
+  })
   .catch(error => {
     console.error(error);
   });
   
   }
-  console.log(pathname)
+  
   return (
     <NavWrapper show = {show}>
       <Logo>
@@ -79,10 +99,11 @@ const Nav = () => {
           onChange={handleChange}
           className='nav__input'
           type="text"
-          placeholder='영화를 검색해보세요' /><Signout>
-            <UserImg />
+          placeholder='영화를 검색해보세요' />
+          <Signout>
+            <UserImg src = {userData.photoURL} alt= {userData.displayName}/>
             <DropDown>
-              <span>Sign out</span>
+              <span onClick = {handleSignout}>Sign out</span>
             </DropDown>
           </Signout>
         </>
@@ -95,16 +116,47 @@ const Nav = () => {
 
 export default Nav
 
-const Signout= styled.div`
-
-`;
-
-const UserImg = styled.div`
-
-`;
 const DropDown = styled.div`
+  position:absolute;
+  top: 48px;
+  right: 0px;
+  background: rgb(19,19,19);
+  border: 1px solid rgba(151, 151, 151, 0.34);
+  border-radius: 4px;
+  box-shadow: rgb(0 0 0 /50%) 0px 0px 18px 0px;
+  padding: 10px;
+  font-size : 14px;
+  letter-spacing: 3px;
+  width: 100%;
+  opacity: 0;
+  transition-duration: .4s;
+  
+`;
+
+const Signout= styled.div`
+  position: relative;
+  height: 48px;
+  width: 48px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  &: hover{
+    ${DropDown}{
+      opacity:1;
+      transition-duration:1s;
+    }
+  }
 
 `;
+
+const UserImg = styled.img`
+  border-radius: 50%;
+  width: 90%;
+  height: 90%;
+`;
+
 
 
 const Login = styled.a`
@@ -114,6 +166,7 @@ const Login = styled.a`
   letter-spacing:1.5px;
   border: 1px solid #f9f9f9;
   transition: all 0.2s ease 0s;
+  cursor : pointer;
 
   &:hover {
     background-color : #f9f9f9;
