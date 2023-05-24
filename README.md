@@ -4,7 +4,5 @@
 - npm install
 - npm run start
 
-- Page link : 
-
-https://disney-plus-react-app-447e0.web.app
+- Page link :   https://disney-plus-react-app-447e0.web.app
 
