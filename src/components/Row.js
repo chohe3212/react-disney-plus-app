@@ -68,11 +68,7 @@ const Row = ({title, id, fetchUrl}) => {
               <Wrap>
               <img
                 key={movie.id}
-<<<<<<< HEAD
                 src={`http://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-=======
-                src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
->>>>>>> 986847c81fcd97b281acd84294174675b8ad2192
                 alt={movie.name}
                 onClick={() => handleClick(movie)} />
               </Wrap>
