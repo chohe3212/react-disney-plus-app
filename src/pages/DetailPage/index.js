@@ -22,7 +22,7 @@ const DetailPage = () => {
     <section>
       <img
       className='modal__poster-img'
-      src = {`http://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
+      src = {`http://image.tmdb.org/t/p/original${movie.backdrop_path}`}
       alt = "img"/>
       
     </section>

@@ -41,7 +41,7 @@ const Banner = () => {
         <Container>
           <HomeContainer>
             <Iframe
-              src = {`https://www.youtube.com/embed/${movie.videos.results[0].key}?controls=0&autoplay=1&loop=1&mute=1&playlist=${movie.videos.results[0].key}`}
+              src = {`http://www.youtube.com/embed/${movie.videos.results[0].key}?controls=0&autoplay=1&loop=1&mute=1&playlist=${movie.videos.results[0].key}`}
               width= "640"
               height="360"
               frameborder="0"
@@ -62,7 +62,7 @@ const Banner = () => {
         className='banner'
         style={
           {
-            backgroundImage: `url("https://image.tmdb.org/t/p/original/${movie.backdrop_path}")`,
+            backgroundImage: `url("http://image.tmdb.org/t/p/original${movie.backdrop_path}")`,
             backgroundPosition: "top center",
             backgroundSize: "cover",
           }}

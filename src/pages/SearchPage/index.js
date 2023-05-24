@@ -37,8 +37,8 @@ const SearchPage = () => {
     return (
       <section className = 'search-container'>
         {searchResults.map((movie) => {
-          if(movie.poster_path != null && movie.backdrop_path != null && movie.media_type != "person") {
-            const movieImgUrl = `https://image.tmdb.org/t/p/w500` + movie.backdrop_path;
+          if(movie.poster_path != null && movie.backdrop_path != null && movie.media_type !== "person") {
+            const movieImgUrl = `http://image.tmdb.org/t/p/w500` + movie.backdrop_path;
             return (
               <div className = 'movie' key = {movie.id}>
                 <div className = 'movie__column-poster' onClick = {()=>{
